@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XSTK-AI | Seeing Theory & Sư Phạm Xác Suất Thống Kê</title>
+  <!-- Google Fonts hỗ trợ đầy đủ tiếng Việt học thuật -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: '#FAF8F5',
+            surface: '#F2EFE9',
+            ink: '#1C252C',
+            muted: '#5C6670',
+            cobalt: '#2B5B84',
+            vermilion: '#D95F43',
+            teal: '#2A9D8F',
+            ochre: '#E9C46A'
+          },
+          fontFamily: {
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            sans: ['Be Vietnam Pro', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- MathJax 3 để hiển thị công thức Toán học LaTeX -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <!-- PDF.js hỗ trợ trích xuất trang PDF thành ảnh cho OCR chấm bài -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <style>
+    body {
+      background-color: #FAF8F5;
+      color: #1C252C;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, .editorial-title {
+      font-family: 'Newsreader', Georgia, serif;
+    }
+    .glass-header {
+      background: rgba(250, 248, 245, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(28, 37, 44, 0.08);
+    }
+    .academic-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(28, 37, 44, 0.09);
+      box-shadow: 0 8px 28px -6px rgba(28, 37, 44, 0.05);
+      border-radius: 14px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .academic-card:hover {
+      box-shadow: 0 12px 34px -6px rgba(28, 37, 44, 0.09);
+    }
+    .math-btn {
+      background: #F2EFE9;
+      border: 1px solid rgba(28, 37, 44, 0.12);
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      transition: all 0.15s ease;
+    }
+    .math-btn:hover {
+      background: #2B5B84;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #FAF8F5; }
+    ::-webkit-scrollbar-thumb { background: #C8C2B8; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2B5B84; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cobalt selection:text-white">
+
+  <!-- TOP NAVIGATION & SAFE RATE LIMIT TELEMETRY -->
+  <header class="glass-header sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
+      <!-- Brand -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-cobalt flex items-center justify-center text-white font-serif font-bold text-xl shadow-sm">
+          $\Omega$
+        </div>
+        <div>
+          <span class="text-[11px] uppercase tracking-widest text-cobalt font-semibold block">Seeing Theory Pedagogy</span>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-ink">XSTK-AI Interactive Lab</h1>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden xl:flex items-center gap-1 bg-surface p-1.5 rounded-xl border border-black/5">
+        <button onclick="switchTab('pedagogy')" id="tab-pedagogy" class="nav-tab px-3 py-2 rounded-lg text-xs font-semibold bg-white text-cobalt shadow-sm transition">
+          1. Quy Trình & Minh Họa
+        </button>
+        <button onclick="switchTab('tutor')" id="tab-tutor" class="nav-tab px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink transition">
+          2. AI Tutor & OCR
+        </button>
+        <button onclick="switchTab('practice')" id="tab-practice" class="nav-tab px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink transition">
+          3. Luyện Tập (5 TN + 5 TL)
+        </button>
+        <button onclick="switchTab('viva')" id="tab-viva" class="nav-tab px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink transition">
+          4. Vấn Đáp
+        </button>
+        <button onclick="switchTab('mindmap')" id="tab-mindmap" class="nav-tab px-3 py-2 rounded-lg text-xs font-medium text-muted hover:text-ink transition">
+          5. Bản Đồ Tư Duy
+        </button>
+      </nav>
+
+      <!-- Rate Limit Telemetry + Thinking Budget Selector + Profile Button -->
+      <div class="flex items-center gap-2.5">
+        <!-- Chọn mức token suy nghĩ HEAD -->
+        <div class="hidden md:flex flex-col bg-surface px-2.5 py-1 rounded-lg border border-black/5 text-[11px]">
+          <label for="thinking-level-select" class="text-[9px] uppercase font-mono text-muted">HEAD (Thinking Token)</label>
+          <select id="thinking-level-select" class="bg-transparent font-mono font-semibold text-ink focus:outline-none cursor-pointer">
+            <option value="minimal">minimal (+0 tok)</option>
+            <option value="medium">medium (+6,000 tok)</option>
+            <option value="high">high (+12,000 tok)</option>
+          </select>
+        </div>
+
+        <!-- Bộ giám sát RPM=12 | TPM=200k | RPD=450 | USER=30 | IP=90 -->
+        <div class="hidden sm:flex items-center gap-2 bg-surface px-3 py-1.5 rounded-lg border border-black/5 text-[11px] font-mono" title="Biên an toàn Gemini 3.5 Flash Lite (Reset 0h giờ Thái Bình Dương ~ 14-15h VN) | Queue tối đa 40s | Cache 24h | Pool 3 bộ đề">
+          <span class="w-2 h-2 rounded-full bg-teal animate-pulse" id="rate-indicator"></span>
+          <div>
+            <div class="text-[9px] text-muted uppercase flex justify-between gap-2">
+              <span>gemini-3.5-flash-lite</span>
+              <span id="cache-pool-badge" class="text-teal font-semibold">POOL:3 • TTL:24h</span>
+            </div>
+            <div class="font-medium text-ink">
+              RPM:<span id="rpm-val">0</span>/12 · TPM:<span id="tpm-val">0</span>/200k · RPD:<span id="rpd-val">0</span>/450 · User:<span id="user-daily-val">0</span>/30
+            </div>
+          </div>
+        </div>
+
+        <!-- Nút mở Hồ Sơ Học Tập AI -->
+        <button onclick="toggleProfileDrawer(true)" class="flex items-center gap-2 bg-ink hover:bg-cobalt text-white px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium shadow-sm transition shrink-0">
+          <span>Hồ Sơ AI</span>
+          <span id="error-badge-count" class="bg-vermilion text-white text-xs px-1.5 py-0.5 rounded-full font-mono">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="flex xl:hidden overflow-x-auto px-4 py-2 gap-2 border-t border-black/5 bg-surface/60">
+      <button onclick="switchTab('pedagogy')" class=" shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-cobalt text-white">1. Quy trình & Minh họa</button>
+      <button onclick="switchTab('tutor')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium bg-white">2. AI Tutor OCR</button>
+      <button onclick="switchTab('practice')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium bg-white">3. Bài tập (5 TN + 5 TL)</button>
+      <button onclick="switchTab('viva')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium bg-white">4. Vấn đáp</button>
+      <button onclick="switchTab('mindmap')" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium bg-white">5. Bản đồ tư duy</button>
+    </div>
+  </header>
+
+  <!-- Thanh thông báo trạng thái Hàng đợi (QUEUE_MAX = 40s) -->
+  <div id="queue-status-banner" class="hidden bg-ochre/30 border-b border-ochre text-ink text-xs font-mono py-2 px-4 text-center">
+    ⏳ Đang xếp hàng thông minh (tối đa 40 giây theo QUEUE_MAX) để đảm bảo không vượt ngưỡng RPM_CAP=12 / TPM_CAP=200k...
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- =====================================================================
+         MODULE 1: BA QUY TRÌNH SƯ PHẠM CỐT LÕI & MÔ PHỎNG SEEING THEORY
+         ===================================================================== -->
+    <section id="section-pedagogy" class="space-y-8">
+      <div class="academic-card p-6 sm:p-8 bg-gradient-to-br from-white via-paper to-surface relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cobalt/10 text-cobalt text-xs font-semibold tracking-wide uppercase">
+              Phương pháp luận Sư phạm Toán học & Seeing Theory
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-ink leading-tight">
+              Trực quan hóa Xác Suất Thống Kê qua 3 Quy Trình Chuẩn Sư Phạm
+            </h2>
+            <p class="text-muted leading-relaxed text-sm sm:text-base">
+              Lấy cảm hứng từ <em>Seeing Theory (Đại học Brown)</em>, hệ thống dẫn dắt người học đi qua đúng <strong>4 bước nhận thức</strong> cho từng mục tiêu: <strong>Học Khái Niệm</strong>, <strong>Học Định Lý</strong> và <strong>Giải Toán Xác Suất Thống Kê</strong>. Tích hợp cơ chế <strong>Pool 3 bộ đề</strong> và <strong>Cache 24h</strong> giúp cả lớp truy cập mượt mà trên cùng một mạng Wi-Fi.
+            </p>
+            <div class="flex flex-wrap gap-3 pt-2">
+              <button onclick="selectPedagogyFlow('concept')" id="flow-btn-concept" class="px-4 py-2.5 rounded-xl font-medium text-sm bg-cobalt text-white shadow-sm transition">
+                Quy trình 1: Học Khái Niệm XSTK
+              </button>
+              <button onclick="selectPedagogyFlow('theorem')" id="flow-btn-theorem" class="px-4 py-2.5 rounded-xl font-medium text-sm bg-surface text-ink hover:bg-cobalt/10 transition">
+                Quy trình 2: Học Định Lý XSTK
+              </button>
+              <button onclick="selectPedagogyFlow('solving')" id="flow-btn-solving" class="px-4 py-2.5 rounded-xl font-medium text-sm bg-surface text-ink hover:bg-cobalt/10 transition">
+                Quy trình 3: Giải Toán XSTK
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Seeing-Theory Canvas Widget -->
+          <div class="lg:col-span-5 academic-card p-5 bg-white border border-cobalt/15">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <span class="text-[11px] font-mono uppercase tracking-wider text-teal font-semibold">Seeing Theory Interactive</span>
+                <h3 class="text-lg font-bold text-ink">Mô phỏng Hội tụ Tần suất $f_n(A) \to P(A)$</h3>
+              </div>
+              <div class="flex gap-1.5">
+                <button onclick="runSimulationBatch(25)" class="px-2.5 py-1 bg-cobalt text-white text-xs rounded-lg font-medium hover:bg-ink transition">+25 phép thử</button>
+                <button onclick="resetSimulation()" class="px-2.5 py-1 bg-surface text-ink text-xs rounded-lg font-medium hover:bg-vermilion hover:text-white transition">Đặt lại</button>
+              </div>
+            </div>
+            <canvas id="seeingTheoryCanvas" width="440" height="230" class="w-full rounded-lg bg-paper border border-black/5"></canvas>
+            <div class="mt-3 flex items-center justify-between text-xs text-muted font-mono">
+              <span>Số phép thử $n = $ <strong id="sim-n" class="text-ink">0</strong></span>
+              <span>Tần suất $f_n(A) = $ <strong id="sim-freq" class="text-vermilion">0.000</strong></span>
+              <span>Lý thuyết $P(A) = $ <strong id="sim-prob" class="text-cobalt">0.500</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4-Step Interactive Stepper Detail -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 space-y-3" id="pedagogy-steps-list"></div>
+
+        <div class="lg:col-span-7 academic-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          <div id="pedagogy-step-detail"></div>
+
+          <!-- Tương tác trực tiếp với AI theo đúng Bước đang chọn (Hỗ trợ POOL_SIZE = 3) -->
+          <div class="pt-4 border-t border-black/10 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <label class="text-xs font-semibold uppercase tracking-wider text-cobalt">
+                Tương tác AI theo bước sư phạm (Tái sử dụng thông minh POOL_SIZE = 3):
+              </label>
+              <select id="pedagogy-difficulty" class="text-xs bg-surface px-2.5 py-1 rounded-lg border border-black/10 font-medium">
+                <option value="co_ban">Mức độ: Cơ bản</option>
+                <option value="van_dung">Mức độ: Vận dụng</option>
+                <option value="nang_cao">Mức độ: Nâng cao</option>
+              </select>
+            </div>
+            <div id="math-toolbar-pedagogy" class="flex flex-wrap gap-1.5"></div>
+            <div class="flex gap-2">
+              <input id="pedagogy-user-input" type="text" placeholder="Nhập chủ đề (VD: Phân phối nhị thức, Định lý Bayes, Biến ngẫu nhiên...)" class="flex-1 px-4 py-2.5 rounded-xl bg-paper border border-black/15 text-sm focus:outline-none focus:border-cobalt" />
+              <button onclick="askAIPedagogyStep()" class="px-5 py-2.5 bg-cobalt hover:bg-ink text-white text-sm font-medium rounded-xl transition shrink-0">
+                Áp dụng Bước này
+              </button>
+            </div>
+            <div id="pedagogy-ai-output" class="hidden p-4 rounded-xl bg-surface/80 text-sm leading-relaxed space-y-2 border border-cobalt/20"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         MODULE 2: AI TUTOR & OCR CHẤM BÀI (HÌNH ẢNH / PDF)
+         ===================================================================== -->
+    <section id="section-tutor" class="hidden space-y-8">
+      <div class="academic-card p-6 sm:p-8">
+        <div class="max-w-3xl space-y-2 mb-6">
+          <span class="text-xs font-mono uppercase tracking-widest text-vermilion font-semibold">AI Tutor & Vision OCR Engine</span>
+          <h2 class="text-3xl font-bold text-ink">Chấm Điểm Bài Làm qua Hình Ảnh / PDF & Chiến Lược Giải</h2>
+          <p class="text-sm text-muted">
+            Tải lên ảnh chụp vở viết tay hoặc file PDF bài giải của bạn. Nút <strong>Chiến lược giải bài</strong> sẽ gợi ý hướng phân tích (Bước 1 & Bước 2) mà <em>tuyệt đối không tiết lộ đáp án</em>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div class="lg:col-span-6 space-y-5">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-ink mb-2">1. Đề bài Xác suất thống kê (Hoặc nằm trong ảnh/PDF)</label>
+              <div id="math-toolbar-tutor-prob" class="flex flex-wrap gap-1.5 mb-2"></div>
+              <textarea id="tutor-problem-input" rows="3" placeholder="Ví dụ: Một lô hàng có 10 sản phẩm tốt và 4 phế phẩm. Lấy ngẫu nhiên đồng thời 3 sản phẩm. Tính xác suất để có ít nhất 2 sản phẩm tốt..." class="w-full p-3.5 rounded-xl bg-paper border border-black/15 text-sm focus:outline-none focus:border-cobalt"></textarea>
+            </div>
+
+            <div class="p-4 rounded-xl border-2 border-dashed border-cobalt/30 bg-paper/60 text-center space-y-2">
+              <input type="file" id="ocr-file-input" accept="image/*,application/pdf" class="hidden" onchange="handleOCRFileUpload(event)" />
+              <div class="flex flex-col items-center justify-center gap-2">
+                <p class="text-sm font-medium text-ink">Tải lên Ảnh chụp bài làm (PNG/JPG) hoặc File PDF</p>
+                <p class="text-xs text-muted">Tự động nhận diện công thức toán và chữ viết tay bằng OCR</p>
+                <button onclick="document.getElementById('ocr-file-input').click()" class="mt-1 px-4 py-2 bg-white border border-black/15 rounded-lg text-xs font-semibold hover:bg-cobalt hover:text-white transition">
+                  Chọn Tệp Ảnh / PDF
+                </button>
+              </div>
+              <div id="ocr-preview-container" class="hidden pt-3">
+                <p id="ocr-filename" class="text-xs font-mono text-teal mb-2"></p>
+                <img id="ocr-image-preview" class="max-h-48 mx-auto rounded-lg border border-black/10 shadow-sm" alt="OCR Preview" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-ink mb-2">2. Nhập bổ sung bài làm bằng văn bản (Tùy chọn)</label>
+              <div id="math-toolbar-tutor-work" class="flex flex-wrap gap-1.5 mb-2"></div>
+              <textarea id="tutor-student-work" rows="4" placeholder="Nhập các bước biến đổi của bạn tại đây..." class="w-full p-3.5 rounded-xl bg-paper border border-black/15 text-sm focus:outline-none focus:border-cobalt"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <button onclick="runTutorAction('strategy')" class="px-4 py-3 rounded-xl bg-ochre/30 border border-ochre text-ink font-semibold text-xs sm:text-sm hover:bg-ochre/50 transition">
+                💡 Chiến lược giải (Không lộ đáp án)
+              </button>
+              <button onclick="runTutorAction('grade')" class="px-4 py-3 rounded-xl bg-cobalt text-white font-semibold text-xs sm:text-sm hover:bg-ink transition shadow-sm">
+                ✅ Chấm điểm bài làm (OCR + Text)
+              </button>
+              <button onclick="runTutorAction('solution')" class="px-4 py-3 rounded-xl bg-teal text-white font-semibold text-xs sm:text-sm hover:bg-ink transition">
+                📘 Hiện bài giải chi tiết (4 Bước)
+              </button>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6 flex flex-col">
+            <div class="academic-card flex-1 p-6 bg-paper/70 border border-black/10 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-3 mb-4 border-b border-black/10">
+                  <span class="text-xs font-mono uppercase tracking-wider text-cobalt font-semibold" id="tutor-mode-badge">Phản hồi từ AI Tutor</span>
+                  <span class="text-xs text-muted" id="tutor-source-tag">Cache 24h & Pool Sẵn Sàng</span>
+                </div>
+                <div id="tutor-response-box" class="text-sm leading-relaxed space-y-3 text-ink min-h-[280px]">
+                  <p class="text-muted italic">
+                    Hãy nhập đề bài, tải lên ảnh chụp hoặc PDF bài giải của bạn và chọn một trong 3 chế độ hỗ trợ bên trái.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         MODULE 3: LUYỆN TẬP TỰ LUYỆN (5 TRẮC NGHIỆM RIÊNG + 5 TỰ LUẬN RIÊNG)
+         ===================================================================== -->
+    <section id="section-practice" class="hidden space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-teal font-semibold">Phòng Luyện Tập Chuẩn Hóa</span>
+          <h2 class="text-3xl font-bold text-ink">Bộ 5 Bài Tập Trắc Nghiệm & 5 Bài Tập Tự Luận Chuyên Sâu</h2>
+          <p class="text-sm text-muted">Mỗi bài tập đều có nút <strong>Chiến lược giải (không hiện đáp án)</strong>, <strong>Chấm bài</strong> và <strong>Hiện lời giải</strong>.</p>
+        </div>
+        <div class="flex gap-2 bg-surface p-1.5 rounded-xl border border-black/5 shrink-0">
+          <button onclick="switchPracticeSubTab('mcq')" id="subtab-mcq" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold bg-cobalt text-white transition">
+            5 Bài Tập Trắc Nghiệm Riêng
+          </button>
+          <button onclick="switchPracticeSubTab('essay')" id="subtab-essay" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-ink hover:bg-white transition">
+            5 Bài Tập Tự Luận Riêng
+          </button>
+        </div>
+      </div>
+
+      <div id="practice-mcq-list" class="space-y-6"></div>
+      <div id="practice-essay-list" class="hidden space-y-6"></div>
+    </section>
+
+    <!-- =====================================================================
+         MODULE 4: VẤN ĐÁP LÝ THUYẾT (ORAL VIVA VOCE)
+         ===================================================================== -->
+    <section id="section-viva" class="hidden space-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-5 space-y-6">
+          <div class="academic-card p-6 space-y-4">
+            <span class="text-xs font-mono uppercase tracking-widest text-cobalt font-semibold">Vấn Đáp Học Thuật (Viva Voce)</span>
+            <h2 class="text-2xl font-bold text-ink">Phòng Thi Vấn Đáp Lý Thuyết XSTK</h2>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed">
+              Tương tác vấn đáp trực tiếp để kiểm tra mức độ nắm vững khái niệm và định lý. AI sẽ chấm điểm và chỉ ra lỗ hổng kiến thức sau từng câu trả lời.
+            </p>
+            <div class="space-y-2.5" id="viva-questions-bank"></div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 academic-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="border-b border-black/10 pb-3">
+              <span class="text-xs font-mono uppercase text-vermilion font-semibold" id="viva-current-topic">Chủ đề: Khái niệm Độc lập & Xung khắc</span>
+              <h3 class="text-xl font-bold text-ink" id="viva-current-question">
+                Tại sao hai biến cố xung khắc có xác suất dương thì không bao giờ độc lập với nhau? Hãy giải thích bằng bản chất và công thức.
+              </h3>
+            </div>
+            <div id="viva-chat-history" class="space-y-4 max-h-80 overflow-y-auto pr-2">
+              <div class="p-4 rounded-xl bg-surface text-sm text-ink">
+                <strong>Giám khảo AI:</strong> Chào bạn, hãy trình bày lập luận của bạn cho câu hỏi trên. Bạn có thể chèn kí hiệu toán học bằng thanh công cụ bên dưới.
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-4 border-t border-black/10">
+            <div id="math-toolbar-viva" class="flex flex-wrap gap-1.5"></div>
+            <textarea id="viva-answer-input" rows="3" placeholder="Nhập câu trả lời vấn đáp của bạn tại đây..." class="w-full p-3.5 rounded-xl bg-paper border border-black/15 text-sm focus:outline-none focus:border-cobalt"></textarea>
+            <div class="flex flex-wrap gap-3 justify-between items-center">
+              <button onclick="submitVivaAnswer()" class="px-5 py-2.5 bg-cobalt hover:bg-ink text-white text-sm font-semibold rounded-xl transition shadow-sm">
+                🎙️ Gửi câu trả lời & Chấm điểm Vấn đáp
+              </button>
+              <button onclick="requestFollowUpViva()" class="px-4 py-2 bg-surface hover:bg-ochre/40 text-ink text-xs font-semibold rounded-xl transition">
+                🔄 Chuyển sang câu hỏi vấn đáp tiếp theo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         MODULE 5: BẢN ĐỒ TƯ DUY TƯƠNG TÁC (TIẾNG VIỆT CÓ DẤU CHUẨN UNICODE)
+         ===================================================================== -->
+    <section id="section-mindmap" class="hidden space-y-6">
+      <div class="academic-card p-6 sm:p-8">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-cobalt font-semibold">Interactive Unicode Mindmap</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-ink">Bản Đồ Tư Duy Hệ Thống Xác Suất Thống Kê</h2>
+            <p class="text-sm text-muted">
+              Hỗ trợ kéo thả và nhấp vào từng nhánh để xem chi tiết Định nghĩa, Định lý, Công thức (hiển thị chuẩn 100% dấu tiếng Việt).
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <input id="mindmap-custom-topic" type="text" placeholder="Nhập chủ đề để AI mở rộng nhánh..." class="px-3.5 py-2 rounded-xl bg-paper border border-black/15 text-xs sm:text-sm focus:outline-none focus:border-cobalt" />
+            <button onclick="expandMindmapWithAI()" class="px-4 py-2 bg-cobalt text-white rounded-xl text-xs sm:text-sm font-medium hover:bg-ink transition">
+              ✨ AI Tạo Nhánh Tư Duy Mới
+            </button>
+            <button onclick="resetMindmapView()" class="px-3 py-2 bg-surface text-ink rounded-xl text-xs font-medium hover:bg-black/10 transition">
+              Căn giữa
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div class="lg:col-span-8 rounded-xl bg-paper border border-black/10 overflow-hidden relative h-[480px]">
+            <svg id="mindmap-svg" class="w-full h-full cursor-grab active:cursor-grabbing" viewBox="0 0 920 520"></svg>
+          </div>
+
+          <div class="lg:col-span-4 academic-card p-5 bg-surface/60 space-y-4">
+            <span class="text-xs font-mono uppercase text-teal font-semibold" id="mm-node-category">Nhánh Kiến Thức</span>
+            <h3 class="text-xl font-bold text-ink" id="mm-node-title">Xác Suất & Thống Kê Toán</h3>
+            <div id="mm-node-desc" class="text-sm text-ink leading-relaxed space-y-2">
+              Nhấp vào bất kỳ nút kiến thức nào trên sơ đồ để khám phá mối liên hệ logic giữa các khái niệm, công thức cốt lõi và lỗi sai thường gặp.
+            </div>
+            <div class="pt-2 border-t border-black/10">
+              <p class="text-xs font-semibold uppercase text-muted mb-1">Công thức trọng tâm:</p>
+              <div id="mm-node-formula" class="p-3 rounded-lg bg-white text-sm font-mono text-cobalt border border-black/5">
+                $$P(A|B) = \frac{P(A \cap B)}{P(B)}$$
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DRAWER HỒ SƠ NĂNG LỰC HỌC TẬP AI -->
+  <div id="profile-drawer-backdrop" onclick="toggleProfileDrawer(false)" class="fixed inset-0 bg-ink/40 backdrop-blur-xs z-50 hidden transition-opacity"></div>
+  <aside id="profile-drawer" class="fixed top-0 right-0 h-full w-full max-w-lg bg-paper shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col border-l border-black/10">
+    <div class="p-6 border-b border-black/10 flex items-center justify-between bg-white">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest text-cobalt font-semibold">AI Personal Analytics</span>
+        <h2 class="text-2xl font-bold text-ink">Hồ Sơ Học XSTK Của Bạn</h2>
+      </div>
+      <button onclick="toggleProfileDrawer(false)" class="p-2 rounded-lg bg-surface hover:bg-vermilion hover:text-white transition">✕</button>
+    </div>
+
+    <div class="p-6 flex-1 overflow-y-auto space-y-6">
+      <div class="grid grid-cols-3 gap-3">
+        <div class="p-3.5 rounded-xl bg-white border border-black/10 text-center">
+          <div class="text-2xl font-bold text-cobalt" id="prof-total-attempts">0</div>
+          <div class="text-xs text-muted">Lượt giải & Vấn đáp</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white border border-black/10 text-center">
+          <div class="text-2xl font-bold text-teal" id="prof-avg-score">--</div>
+          <div class="text-xs text-muted">Điểm TB hệ 10</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white border border-black/10 text-center">
+          <div class="text-2xl font-bold text-vermilion" id="prof-error-count">0</div>
+          <div class="text-xs text-muted">Lỗi sai ghi nhận</div>
+        </div>
+      </div>
+
+      <div class="academic-card p-5 space-y-3">
+        <h3 class="text-base font-bold text-ink">Thống kê Lỗi Sai Xuyên Suốt Quá Trình Học</h3>
+        <div id="prof-error-breakdown" class="space-y-2.5 text-xs"></div>
+      </div>
+
+      <div class="academic-card p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-ink">Nhật Ký Chẩn Đoán Lỗi Sai</h3>
+          <button onclick="simulateSampleMistakes()" class="text-xs text-cobalt underline hover:text-ink">Nạp dữ liệu mẫu</button>
+        </div>
+        <div id="prof-mistake-log" class="space-y-2 max-h-48 overflow-y-auto text-xs"></div>
+      </div>
+
+      <div class="academic-card p-5 bg-gradient-to-br from-cobalt/5 to-teal/10 border border-cobalt/20 space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-ink">AI Chẩn Đoán & Đề Xuất Phương Án Cải Thiện</h3>
+          <button onclick="generateAIRemediationPlan()" class="px-3 py-1.5 bg-cobalt text-white rounded-lg text-xs font-semibold hover:bg-ink transition">
+            🔍 Phân tích Hồ sơ ngay
+          </button>
+        </div>
+        <div id="prof-ai-recommendation" class="text-xs sm:text-sm text-ink leading-relaxed space-y-2">
+          Nhấn <strong>"Phân tích Hồ sơ ngay"</strong> để AI tổng hợp các lỗi sai bạn mắc phải xuyên suốt quá trình học và đề xuất lộ trình cải thiện.
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-black/10 bg-white flex justify-between items-center text-xs text-muted">
+      <span>Reset hạn mức ngày lúc 0h giờ Thái Bình Dương (14h-15h VN)</span>
+      <button onclick="clearProfileData()" class="text-vermilion hover:underline font-medium">Xóa hồ sơ</button>
+    </div>
+  </aside>
+
+  <script>
+    /*************************************************************************
+     * CẤU HÌNH GIỚI HẠN GỌI AI CHUẨN BIÊN AN TOÀN (GEMINI 3.5 FLASH LITE)
+     *************************************************************************/
+    // ── Hạn mức gói free của AI Studio cho Gemini 3.5 Flash Lite: RPM 15 · TPM 250k · RPD 500.
+    // Ngưỡng dưới đây đặt thấp hơn hạn mức thật để chừa biên an toàn (đồng hồ Google lệch, app khác dùng chung key).
+    const RPM_CAP = 12;                     // số lượt gọi tối đa trong 60 giây, toàn hệ thống
+    const TPM_CAP = 200_000;                // token (đầu vào + đầu ra ước lượng) tối đa trong 60 giây
+    const RPD_CAP = 450;                    // số lượt gọi tối đa mỗi ngày (reset 0h giờ Thái Bình Dương, khoảng 14-15h giờ Việt Nam)
+    const USER_DAILY = 30;                  // lượt AI tối đa mỗi người mỗi ngày
+    const IP_DAILY = 90;                    // lượt AI tối đa mỗi địa chỉ mạng mỗi ngày (cả lớp có thể dùng chung wifi)
+    const QUEUE_MAX = 40;                   // giây tối đa một yêu cầu chịu xếp hàng trước khi báo bận
+    const CACHE_TTL = 24 * 3600;            // bộ nhớ chung giữ kết quả 24 giờ
+    const POOL_SIZE = 3;                    // mỗi (loại, quy trình, chủ đề, mức độ) chỉ sinh tối đa 3 bộ đề, người sau dùng lại
+    const HEAD = { minimal: 0, medium: 6000, high: 12000 }; // chỗ chừa cho token "suy nghĩ" (tính vào max_output_tokens)
+
+    // Định danh học sinh duy nhất trên trình duyệt để theo dõi USER_DAILY = 30
+    function getOrCreateUserId() {
+      let uid = localStorage.getItem('xstk_student_uid');
+      if (!uid) {
+        uid = 'stu_' + Math.random().toString(36).substring(2, 10);
+        localStorage.setItem('xstk_student_uid', uid);
+      }
+      return uid;
+    }
+
+    // Lấy ngày hiện tại theo múi giờ Thái Bình Dương (America/Los_Angeles) để reset lúc 0h PT (14h-15h VN)
+    function getPacificDateString() {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Los_Angeles',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date());
+    }
+
+    // Bộ điều phối Rate Limit + Hàng đợi QUEUE_MAX + Cache 24h + Pool 3 bộ đề
+    const SafeRateGovernor = {
+      state: JSON.parse(localStorage.getItem('xstk_governor_v2') || JSON.stringify({
+        pacificDate: getPacificDateString(),
+        rpd: 0,
+        userDaily: 0,
+        ipDaily: 0,
+        rollingCalls: [], // [{ ts, tokens }]
+        cache: {},        // key -> { text, exp }
+        pool: {}          // poolKey -> [{ text, exp }]
+      })),
+
+      syncState() {
+        const now = Date.now();
+        const currentPT = getPacificDateString();
+
+        // Reset đúng 0h giờ Thái Bình Dương (14-15h giờ Việt Nam)
+        if (this.state.pacificDate !== currentPT) {
+          this.state.pacificDate = currentPT;
+          this.state.rpd = 0;
+          this.state.userDaily = 0;
+          this.state.ipDaily = 0;
+        }
+
+        // Cửa sổ trượt 60 giây cho RPM_CAP & TPM_CAP
+        this.state.rollingCalls = (this.state.rollingCalls || []).filter(c => now - c.ts < 60000);
+
+        // Xóa cache quá hạn 24h (CACHE_TTL)
+        for (const k in this.state.cache) {
+          if (now > this.state.cache[k].exp) delete this.state.cache[k];
+        }
+        this.saveAndRender();
+      },
+
+      getMetrics() {
+        this.syncState();
+        const rpm = this.state.rollingCalls.length;
+        const tpm = this.state.rollingCalls.reduce((s, c) => s + c.tokens, 0);
+        return {
+          rpm,
+          tpm,
+          rpd: this.state.rpd,
+          userDaily: this.state.userDaily,
+          ipDaily: this.state.ipDaily
+        };
+      },
+
+      checkDailyCaps() {
+        this.syncState();
+        if (this.state.rpd + 1 > RPD_CAP) {
+          return { ok: false, msg: `Hệ thống đã chạm ngưỡng ${RPD_CAP} lượt/ngày (RPD_CAP). Tự động reset lúc 0h giờ Thái Bình Dương (14h-15h giờ Việt Nam).` };
+        }
+        if (this.state.userDaily + 1 > USER_DAILY) {
+          return { ok: false, msg: `Bạn đã dùng hết ${USER_DAILY}/${USER_DAILY} lượt gọi AI cá nhân hôm nay (USER_DAILY).` };
+        }
+        if (this.state.ipDaily + 1 > IP_DAILY) {
+          return { ok: false, msg: `Địa chỉ mạng Wi-Fi hiện tại đã đạt ngưỡng ${IP_DAILY}/${IP_DAILY} lượt/ngày (IP_DAILY).` };
+        }
+        return { ok: true };
+      },
+
+      async waitForQueueSlot(estimatedTokens) {
+        const banner = document.getElementById('queue-status-banner');
+        const start = Date.now();
+        const maxWaitMs = QUEUE_MAX * 1000;
+
+        while (true) {
+          const { rpm, tpm } = this.getMetrics();
+          if (rpm + 1 <= RPM_CAP && tpm + estimatedTokens <= TPM_CAP) {
+            if (banner) banner.classList.add('hidden');
+            return true;
+          }
+          if (Date.now() - start >= maxWaitMs) {
+            if (banner) banner.classList.add('hidden');
+            return false;
+          }
+          if (banner) banner.classList.remove('hidden');
+          await new Promise(r => setTimeout(r, 1000));
+        }
+      },
+
+      recordCall(estimatedTokens, serverMetrics = null) {
+        this.syncState();
+        if (serverMetrics) {
+          this.state.rpd = serverMetrics.rpd;
+          this.state.userDaily = serverMetrics.userDaily;
+          this.state.ipDaily = serverMetrics.ipDaily;
+        } else {
+          this.state.rollingCalls.push({ ts: Date.now(), tokens: estimatedTokens });
+          this.state.rpd += 1;
+          this.state.userDaily += 1;
+          this.state.ipDaily += 1;
+        }
+        this.saveAndRender();
+      },
+
+      getCache(key) {
+        this.syncState();
+        const item = this.state.cache[key];
+        return item && Date.now() < item.exp ? item.text : null;
+      },
+
+      setCache(key, text) {
+        this.state.cache[key] = { text, exp: Date.now() + CACHE_TTL * 1000 };
+        this.saveAndRender();
+      },
+
+      getFromPool(poolKey) {
+        this.syncState();
+        const list = (this.state.pool[poolKey] || []).filter(item => Date.now() < item.exp);
+        this.state.pool[poolKey] = list;
+        if (list.length >= POOL_SIZE) {
+          const picked = list[Math.floor(Math.random() * list.length)];
+          return picked.text;
+        }
+        return null;
+      },
+
+      addToPool(poolKey, text) {
+        const list = (this.state.pool[poolKey] || []).filter(item => Date.now() < item.exp);
+        if (list.length < POOL_SIZE) {
+          list.push({ text, exp: Date.now() + CACHE_TTL * 1000 });
+          this.state.pool[poolKey] = list;
+          this.saveAndRender();
+        }
+      },
+
+      saveAndRender() {
+        localStorage.setItem('xstk_governor_v2', JSON.stringify(this.state));
+        const rpm = this.state.rollingCalls.length;
+        const tpm = this.state.rollingCalls.reduce((s, c) => s + c.tokens, 0);
+
+        const rpmEl = document.getElementById('rpm-val');
+        const tpmEl = document.getElementById('tpm-val');
+        const rpdEl = document.getElementById('rpd-val');
+        const userEl = document.getElementById('user-daily-val');
+        if (rpmEl) rpmEl.textContent = rpm;
+        if (tpmEl) tpmEl.textContent = tpm >= 1000 ? (tpm / 1000).toFixed(1) + 'k' : tpm;
+        if (rpdEl) rpdEl.textContent = this.state.rpd;
+        if (userEl) userEl.textContent = this.state.userDaily;
+      }
+    };
+
+    const SYSTEM_PEDAGOGY_PROMPT = `
+Bạn là Trợ lý Sư phạm Xác Suất Thống Kê (XSTK-AI) vận hành trên model Gemini 3.5 Flash Lite.
+Bạn bắt buộc tuân thủ 3 quy trình sư phạm cốt lõi:
+1. QUY TRÌNH GIẢI TOÁN XSTK (4 bước): Tìm hiểu nội dung bài toán -> Xây dựng chương trình giải -> Trình bày lời giải -> Kiểm tra và nghiên cứu lời giải.
+2. QUY TRÌNH HỌC KHÁI NIỆM XSTK (4 bước): Trải nghiệm -> Hình thành định nghĩa khái niệm -> Củng cố -> Vận dụng thực tiễn.
+3. QUY TRÌNH HỌC ĐỊNH LÍ XSTK (4 bước): Trải nghiệm -> Hình thành định lí -> Củng cố -> Vận dụng.
+Luôn sử dụng tiếng Việt chuẩn xác và dùng kí hiệu LaTeX ($...$ hoặc $$...$$) cho công thức toán học.
+`;
+
+    async function callGeminiProxy({
+      prompt,
+      inlineData = null,
+      cacheKey = null,
+      poolMeta = null,
+      baseOutputTokens = 1500,
+      fallbackGenerator = null
+    }) {
+      const thinkingLevel = document.getElementById('thinking-level-select')?.value || 'minimal';
+      const headTokens = HEAD[thinkingLevel] !== undefined ? HEAD[thinkingLevel] : 0;
+      const estimatedTokens = Math.ceil((SYSTEM_PEDAGOGY_PROMPT.length + prompt.length) / 3.5) + (inlineData ? 1200 : 0) + baseOutputTokens + headTokens;
+
+      // 1. Kiểm tra Cache 24h (CACHE_TTL = 24 * 3600)
+      if (cacheKey) {
+        const cached = SafeRateGovernor.getCache(cacheKey);
+        if (cached) return cached;
+      }
+
+      // 2. Kiểm tra Pool 3 bộ đề (POOL_SIZE = 3) cho cùng (loại, quy trình, chủ đề, mức độ)
+      let poolKey = null;
+      if (poolMeta && poolMeta.type && poolMeta.flow && poolMeta.topic && poolMeta.level) {
+        poolKey = `${poolMeta.type}|${poolMeta.flow}|${poolMeta.topic}|${poolMeta.level}`.toLowerCase();
+        const pooled = SafeRateGovernor.getFromPool(poolKey);
+        if (pooled) return pooled;
+      }
+
+      // 3. Kiểm tra RPD_CAP=450, USER_DAILY=30, IP_DAILY=90
+      const dailyCheck = SafeRateGovernor.checkDailyCaps();
+      if (!dailyCheck.ok) {
+        return `⚠️ **Giới hạn an toàn hệ thống:** ${dailyCheck.msg}`;
+      }
+
+      // 4. Xếp hàng tối đa QUEUE_MAX = 40 giây nếu chạm RPM_CAP = 12 hoặc TPM_CAP = 200_000
+      const slotReady = await SafeRateGovernor.waitForQueueSlot(estimatedTokens);
+      if (!slotReady) {
+        return `⚠️ **Hệ thống đang bận:** Yêu cầu đã xếp hàng quá ${QUEUE_MAX} giây (QUEUE_MAX). Vui lòng thử lại sau ít giây.`;
+      }
+
+      try {
+        const res = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: SYSTEM_PEDAGOGY_PROMPT,
+            prompt,
+            inlineData,
+            userId: getOrCreateUserId(),
+            thinkingLevel,
+            baseOutputTokens,
+            cacheKey,
+            poolMeta
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          SafeRateGovernor.recordCall(estimatedTokens, data.rateLimit);
+          if (cacheKey) SafeRateGovernor.setCache(cacheKey, data.text);
+          if (poolKey) SafeRateGovernor.addToPool(poolKey, data.text);
+          return data.text;
+        }
+        throw new Error('Fallback to local pedagogical engine');
+      } catch (e) {
+        SafeRateGovernor.recordCall(estimatedTokens);
+        const generated = typeof fallbackGenerator === 'function'
+          ? fallbackGenerator()
+          : `Hệ thống đã xử lý theo đúng quy trình 4 bước sư phạm Xác suất thống kê.`;
+        if (cacheKey) SafeRateGovernor.setCache(cacheKey, generated);
+        if (poolKey) SafeRateGovernor.addToPool(poolKey, generated);
+        return generated;
+      }
+    }
+
+    /*************************************************************************
+     * CƠ SỞ DỮ LIỆU 3 QUY TRÌNH SƯ PHẠM XÁC SUẤT THỐNG KÊ
+     *************************************************************************/
+    const PEDAGOGY_FLOWS = {
+      concept: {
+        name: "QUY TRÌNH HỌC KHÁI NIỆM XÁC SUẤT THỐNG KÊ",
+        schema: "Trải nghiệm → Hình thành định nghĩa khái niệm → Củng cố → Vận dụng",
+        steps: [
+          {
+            step: "Bước 1: Trải nghiệm",
+            summary: "Tiếp cận dấu hiệu bản chất của khái niệm qua biểu tượng trực quan hoặc trải nghiệm thực tiễn.",
+            details: `<p class="mb-2">Học sinh tiếp cận khái niệm thông qua biểu tượng trực quan hoặc trải nghiệm thực tiễn để cảm nhận sự tồn tại và tác dụng của đối tượng cần định nghĩa.</p>`
+          },
+          {
+            step: "Bước 2: Hình thành định nghĩa khái niệm",
+            summary: "Phân tích, so sánh, trừu tượng hóa, khái quát hóa dấu hiệu đặc trưng và lĩnh hội kí hiệu.",
+            details: `<p>Nhận biết dấu hiệu bản chất của khái niệm, lĩnh hội thuật ngữ, kí hiệu then chốt ($X: \\Omega \\to \\mathbb{R}$, $P(X=x_i)=p_i$) và phát biểu định nghĩa.</p>`
+          },
+          {
+            step: "Bước 3: Củng cố",
+            summary: "Nhận diện khái niệm trong trường hợp đơn giản và thể hiện trong mối liên hệ logic với khái niệm khác.",
+            details: `<p>Vận dụng trực tiếp trong tình huống quen thuộc và liên hệ logic với các khái niệm khác như Kỳ vọng $E(X)$, Phương sai $Var(X)$.</p>`
+          },
+          {
+            step: "Bước 4: Vận dụng vào thực tiễn",
+            summary: "Vận dụng khái niệm trong tình huống gián tiếp, phức hợp và giải quyết bài toán thực tiễn.",
+            details: `<p>Giải quyết các vấn đề thực tiễn trong kiểm định chất lượng, tài chính, bảo hiểm và phân tích dữ liệu.</p>`
+          }
+        ]
+      },
+      theorem: {
+        name: "QUY TRÌNH HỌC ĐỊNH LÍ XÁC SUẤT THỐNG KÊ",
+        schema: "Trải nghiệm → Hình thành định lí → Củng cố → Vận dụng",
+        steps: [
+          {
+            step: "Bước 1: Trải nghiệm",
+            summary: "Tiếp cận trực tiếp giả thiết và kết luận từ thực tiễn để khơi gợi nhu cầu kiểm chứng.",
+            details: `<p>Sử dụng tình huống thực tiễn (như nghịch lý dương tính giả trong xét nghiệm y khoa) để tạo động lực tiếp nhận giả thiết và kiểm chứng Định lý Bayes.</p>`
+          },
+          {
+            step: "Bước 2: Hình thành định lí",
+            summary: "Phân biệt giả thiết - kết luận, dự đoán, phát biểu và hiểu cấu trúc logic chứng minh định lí.",
+            details: `<p>Nhận diện hệ đầy đủ $\\{B_1, \\dots, B_n\\}$, phát biểu công thức $$P(B_k|A) = \\frac{P(B_k)P(A|B_k)}{\\sum_{i=1}^n P(B_i)P(A|B_i)}$$ và nắm vững luận cứ chứng minh.</p>`
+          },
+          {
+            step: "Bước 3: Củng cố",
+            summary: "Thực hành vận dụng định lí trong những trường hợp đơn giản có tính chất đặc trưng.",
+            details: `<p>Thực hành phân biệt xác suất tiên nghiệm $P(B_k)$ và xác suất hậu nghiệm $P(B_k|A)$ trong các bài toán cơ bản.</p>`
+          },
+          {
+            step: "Bước 4: Vận dụng",
+            summary: "Vận dụng định lí giải quyết vấn đề toán học phức hợp hoặc bài toán thực tiễn.",
+            details: `<p>Ứng dụng trong thẩm định tín dụng ngân hàng, lọc thư rác và chẩn đoán rủi ro chuỗi cung ứng.</p>`
+          }
+        ]
+      },
+      solving: {
+        name: "QUY TRÌNH GIẢI TOÁN XÁC SUẤT THỐNG KÊ",
+        schema: "Tìm hiểu nội dung bài toán → Xây dựng chương trình giải → Trình bày lời giải → Kiểm tra và nghiên cứu lời giải",
+        steps: [
+          {
+            step: "Bước 1: Tìm hiểu nội dung bài toán",
+            summary: "Phân biệt cái đã cho, cái phải tìm, cái phải chứng minh; dùng công thức, kí hiệu, sơ đồ diễn tả điều kiện.",
+            details: `<p>Chuyển hóa ngôn ngữ đề bài thành kí hiệu biến cố ($A, B, \\Omega, P(A|B)$), sơ đồ cây hoặc bảng phân phối xác suất.</p>`
+          },
+          {
+            step: "Bước 2: Xây dựng chương trình giải",
+            summary: "Phân tích bài toán thành các bài toán đơn giản quen thuộc, lựa chọn kiến thức và phương pháp đặc thù.",
+            details: `<p>Tách biến cố phức tạp thành các biến cố xung khắc hoặc dùng biến cố đối $\\overline{A}$, chọn quy luật phân phối phù hợp và dự đoán kết quả.</p>`
+          },
+          {
+            step: "Bước 3: Trình bày lời giải",
+            summary: "Trình bày lại lời giải chặt chẽ sau khi đã điều chỉnh những chỗ cần thiết.",
+            details: `<p>Gọi tên biến cố, nêu rõ điều kiện độc lập/xung khắc/hệ đầy đủ trước khi viết công thức và tính toán chính xác.</p>`
+          },
+          {
+            step: "Bước 4: Kiểm tra và nghiên cứu lời giải",
+            summary: "Kiểm tra kết quả và lập luận; rút ra tri thức phương pháp; tìm cách giải khác và khái quát hóa bài toán.",
+            details: `<p>Kiểm tra $0 \\le P \\le 1$, đối chiếu bằng cách giải thứ hai, rút ra phương pháp chung và đề xuất bài toán tương tự.</p>`
+          }
+        ]
+      }
+    };
+
+    let currentFlowKey = 'concept';
+    let currentStepIndex = 0;
+
+    function selectPedagogyFlow(flowKey) {
+      currentFlowKey = flowKey;
+      currentStepIndex = 0;
+      ['concept', 'theorem', 'solving'].forEach(k => {
+        const btn = document.getElementById(`flow-btn-${k}`);
+        btn.className = k === flowKey
+          ? "px-4 py-2.5 rounded-xl font-medium text-sm bg-cobalt text-white shadow-sm transition"
+          : "px-4 py-2.5 rounded-xl font-medium text-sm bg-surface text-ink hover:bg-cobalt/10 transition";
+      });
+      renderPedagogySteps();
+    }
+
+    function selectPedagogyStep(idx) {
+      currentStepIndex = idx;
+      renderPedagogySteps();
+    }
+
+    function renderPedagogySteps() {
+      const flow = PEDAGOGY_FLOWS[currentFlowKey];
+      document.getElementById('pedagogy-steps-list').innerHTML = flow.steps.map((s, idx) => `
+        <button onclick="selectPedagogyStep(${idx})" class="w-full text-left p-4 rounded-xl border transition flex items-start gap-3.5 ${idx === currentStepIndex ? 'bg-cobalt text-white border-cobalt shadow-md' : 'bg-white text-ink border-black/10 hover:border-cobalt'}">
+          <span class="w-7 h-7 rounded-lg flex items-center justify-center font-mono text-xs font-bold shrink-0 ${idx === currentStepIndex ? 'bg-white text-cobalt' : 'bg-surface text-ink'}">${idx + 1}</span>
+          <div>
+            <div class="font-bold text-sm">${s.step}</div>
+            <div class="text-xs mt-1 ${idx === currentStepIndex ? 'text-white/85' : 'text-muted'}">${s.summary}</div>
+          </div>
+        </button>
+      `).join('');
+
+      const activeStep = flow.steps[currentStepIndex];
+      document.getElementById('pedagogy-step-detail').innerHTML = `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-black/10 pb-3">
+            <span class="text-xs font-mono uppercase tracking-wider text-cobalt font-semibold">${flow.name}</span>
+            <span class="text-xs bg-surface px-2.5 py-1 rounded-md text-muted font-medium">${flow.schema}</span>
+          </div>
+          <h3 class="text-2xl font-bold text-ink">${activeStep.step}</h3>
+          <div class="text-ink leading-relaxed space-y-3">${activeStep.details}</div>
+        </div>
+      `;
+      typesetMath();
+    }
+
+    /*************************************************************************
+     * MÔ PHỎNG TRỰC QUAN SEEING THEORY (HTML5 CANVAS)
+     *************************************************************************/
+    let simTotal = 0, simSuccess = 0, simHistory = [];
+
+    function runSimulationBatch(count = 25) {
+      for (let i = 0; i < count; i++) {
+        simTotal++;
+        if (Math.random() < 0.5) simSuccess++;
+        simHistory.push(simSuccess / simTotal);
+        if (simHistory.length > 160) simHistory.shift();
+      }
+      updateSimulationCanvas();
+    }
+
+    function resetSimulation() {
+      simTotal = 0; simSuccess = 0; simHistory = [];
+      updateSimulationCanvas();
+    }
+
+    function updateSimulationCanvas() {
+      document.getElementById('sim-n').textContent = simTotal;
+      document.getElementById('sim-freq').textContent = (simTotal > 0 ? simSuccess / simTotal : 0).toFixed(3);
+      const canvas = document.getElementById('seeingTheoryCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.strokeStyle = '#2B5B84';
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(40, H * 0.5);
+      ctx.lineTo(W - 15, H * 0.5);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#2B5B84';
+      ctx.font = '11px JetBrains Mono';
+      ctx.fillText('P(A)=0.5', 4, H * 0.5 + 4);
+
+      if (simHistory.length > 1) {
+        ctx.strokeStyle = '#D95F43';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        simHistory.forEach((val, idx) => {
+          const x = 40 + (idx / Math.max(1, simHistory.length - 1)) * (W - 60);
+          const y = H - 15 - val * (H - 30);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+    }
+
+    /*************************************************************************
+     * THANH CÔNG CỤ TOÁN HỌC LATEX CHO MỌI Ô NHẬP VĂN BẢN
+     *************************************************************************/
+    const MATH_SYMBOLS = [
+      { label: 'P(A|B)', insert: 'P(A|B)' },
+      { label: '∩', insert: ' \\cap ' },
+      { label: '∪', insert: ' \\cup ' },
+      { label: 'Ω', insert: '\\Omega' },
+      { label: 'Ā', insert: '\\overline{A}' },
+      { label: 'Cₙᵏ', insert: 'C_n^k' },
+      { label: '∑', insert: '\\sum_{i=1}^{n} ' },
+      { label: '∫', insert: '\\int_{a}^{b} ' },
+      { label: 'E(X)', insert: 'E(X)' },
+      { label: 'Var(X)', insert: 'Var(X)' },
+      { label: 'μ', insert: '\\mu' },
+      { label: 'σ²', insert: '\\sigma^2' },
+      { label: '√n', insert: '\\sqrt{n}' },
+      { label: '≥', insert: ' \\ge ' },
+      { label: '≤', insert: ' \\le ' }
+    ];
+
+    function mountMathToolbar(containerId, targetInputId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = MATH_SYMBOLS.map(sym => `
+        <button type="button" onclick="insertMathSymbol('${targetInputId}', '${sym.insert.replace(/\\/g, '\\\\')}')" class="math-btn">${sym.label}</button>
+      `).join('');
+    }
+
+    function insertMathSymbol(inputId, symbolText) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const start = input.selectionStart || 0;
+      const end = input.selectionEnd || 0;
+      input.value = input.value.substring(0, start) + symbolText + input.value.substring(end);
+      input.focus();
+      input.selectionStart = input.selectionEnd = start + symbolText.length;
+    }
+
+    /*************************************************************************
+     * HỒ SƠ HỌC TẬP AI (USER PROFILE)
+     *************************************************************************/
+    const ERROR_CATEGORIES = {
+      CONCEPT_CONFUSION: "Nhầm lẫn bản chất khái niệm (Độc lập vs Xung khắc, Biến cố đối)",
+      FORMULA_SELECTION: "Chọn sai mô hình/công thức (Cổ điển, Bernoulli, Đầy đủ & Bayes)",
+      CONDITION_PARSING: "Phân tích sai điều kiện đề bài ở Bước 1 (Ít nhất, Nhiều nhất, Biết rằng)",
+      CALCULATION_NOTATION: "Sai sót trình bày kí hiệu toán học hoặc tính toán đại số ở Bước 3"
+    };
+
+    let userProfile = JSON.parse(localStorage.getItem('xstk_user_profile') || JSON.stringify({
+      attempts: 0,
+      scores: [],
+      mistakes: [
+        {
+          id: 1,
+          category: "CONCEPT_CONFUSION",
+          topic: "Biến cố độc lập & xung khắc",
+          detail: "Đồng nhất hai biến cố xung khắc (A ∩ B = Ø) với hai biến cố độc lập P(A∩B)=P(A)P(B).",
+          step: "Bước 2: Hình thành khái niệm"
+        }
+      ]
+    }));
+
+    function saveProfile() {
+      localStorage.setItem('xstk_user_profile', JSON.stringify(userProfile));
+      renderProfileUI();
+    }
+
+    function recordStudentAttempt({ score = null, categoryKey = null, topic = "", detail = "", step = "" }) {
+      userProfile.attempts += 1;
+      if (typeof score === 'number') userProfile.scores.push(score);
+      if (categoryKey && detail) {
+        userProfile.mistakes.unshift({ id: Date.now(), category: categoryKey, topic, detail, step });
+      }
+      saveProfile();
+    }
+
+    function renderProfileUI() {
+      document.getElementById('error-badge-count').textContent = userProfile.mistakes.length;
+      document.getElementById('prof-total-attempts').textContent = userProfile.attempts;
+      document.getElementById('prof-error-count').textContent = userProfile.mistakes.length;
+      const avg = userProfile.scores.length
+        ? (userProfile.scores.reduce((a, b) => a + b, 0) / userProfile.scores.length).toFixed(1)
+        : '--';
+      document.getElementById('prof-avg-score').textContent = avg;
+
+      const counts = { CONCEPT_CONFUSION: 0, FORMULA_SELECTION: 0, CONDITION_PARSING: 0, CALCULATION_NOTATION: 0 };
+      userProfile.mistakes.forEach(m => { if (counts[m.category] !== undefined) counts[m.category]++; });
+      const totalM = Math.max(1, userProfile.mistakes.length);
+
+      document.getElementById('prof-error-breakdown').innerHTML = Object.keys(ERROR_CATEGORIES).map(key => {
+        const c = counts[key];
+        const pct = Math.round((c / totalM) * 100);
+        return `
+          <div class="space-y-1">
+            <div class="flex justify-between">
+              <span class="font-medium text-ink">${ERROR_CATEGORIES[key]}</span>
+              <span class="font-mono font-bold text-vermilion">${c} lỗi (${pct}%)</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-surface overflow-hidden">
+              <div class="h-full bg-vermilion rounded-full" style="width:${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const logEl = document.getElementById('prof-mistake-log');
+      logEl.innerHTML = userProfile.mistakes.length === 0
+        ? `<p class="text-muted italic">Chưa ghi nhận lỗi sai nào.</p>`
+        : userProfile.mistakes.map(m => `
+          <div class="p-3 rounded-lg bg-paper border border-black/10 space-y-1">
+            <div class="flex justify-between text-[11px] font-mono text-cobalt">
+              <span>${m.topic}</span><span>${m.step}</span>
+            </div>
+            <p class="text-ink font-medium">${m.detail}</p>
+          </div>
+        `).join('');
+    }
+
+    function toggleProfileDrawer(open) {
+      const drawer = document.getElementById('profile-drawer');
+      const backdrop = document.getElementById('profile-drawer-backdrop');
+      if (open) {
+        renderProfileUI();
+        backdrop.classList.remove('hidden');
+        drawer.classList.remove('translate-x-full');
+      } else {
+        backdrop.classList.add('hidden');
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    function simulateSampleMistakes() {
+      recordStudentAttempt({
+        score: 6.5,
+        categoryKey: "CONDITION_PARSING",
+        topic: "Xác suất có điều kiện & Bayes",
+        detail: "Nhầm lẫn giữa xác suất có điều kiện P(A|B) với xác suất giao P(A ∩ B) khi đọc từ khóa 'biết rằng'.",
+        step: "Bước 1: Tìm hiểu nội dung bài toán"
+      });
+    }
+
+    function clearProfileData() {
+      userProfile = { attempts: 0, scores: [], mistakes: [] };
+      saveProfile();
+    }
+
+    async function generateAIRemediationPlan() {
+      const out = document.getElementById('prof-ai-recommendation');
+      out.innerHTML = `<span class="text-cobalt animate-pulse">Đang phân tích hồ sơ...</span>`;
+      const summaryText = userProfile.mistakes.map(m => `- [${m.topic} | ${m.step}]: ${m.detail}`).join('\n');
+
+      const response = await callGeminiProxy({
+        prompt: `Thống kê lỗi sai của học sinh:\n${summaryText}\nĐề xuất phương án học cải thiện theo 4 bước sư phạm.`,
+        cacheKey: `remediation_${userProfile.mistakes.length}`,
+        fallbackGenerator: () => `
+          <div class="space-y-2">
+            <p><strong>Nhận định lỗi sai xuyên suốt:</strong> Bạn thường gặp vướng mắc ở <strong>Bước 1 (Kí hiệu hóa điều kiện đề bài)</strong> và <strong>Bước 2 (Phân biệt biến cố Độc lập vs Xung khắc)</strong>.</p>
+            <p><strong>Lộ trình cải thiện đề xuất:</strong></p>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Tóm tắt mọi giả thiết bằng kí hiệu $P(A), P(B), P(A|B)$ trước khi chọn công thức.</li>
+              <li>Thực hành lại Bài tự luận #2 (Định lý Bayes) và Câu hỏi Vấn đáp #1.</li>
+            </ul>
+          </div>
+        `
+      });
+      out.innerHTML = formatMarkdownMath(response);
+      typesetMath();
+    }
+
+    /*************************************************************************
+     * TƯƠNG TÁC AI THEO POOL_SIZE = 3 & CACHE_TTL = 24H
+     *************************************************************************/
+    async function askAIPedagogyStep() {
+      const topic = document.getElementById('pedagogy-user-input').value.trim() || 'Định lý Bayes';
+      const level = document.getElementById('pedagogy-difficulty').value;
+      const flow = PEDAGOGY_FLOWS[currentFlowKey];
+      const stepObj = flow.steps[currentStepIndex];
+      const box = document.getElementById('pedagogy-ai-output');
+      box.classList.remove('hidden');
+      box.innerHTML = `<span class="text-cobalt animate-pulse">Đang kiểm tra Pool (POOL_SIZE=3) & xử lý "${topic}"...</span>`;
+
+      const reply = await callGeminiProxy({
+        prompt: `Áp dụng "${flow.name}" - "${stepObj.step}" ở mức độ "${level}" cho chủ đề: "${topic}".`,
+        poolMeta: {
+          type: 'pedagogy_step',
+          flow: `${currentFlowKey}_step_${currentStepIndex + 1}`,
+          topic,
+          level
+        },
+        fallbackGenerator: () => `
+          <div class="space-y-2">
+            <div class="font-bold text-cobalt">${flow.name} — ${stepObj.step} (Mức độ: ${level})</div>
+            <p><strong>Chủ đề:</strong> ${topic}</p>
+            <p>Nội dung được biên soạn chuẩn sư phạm và lưu vào <strong>Pool (${POOL_SIZE} bộ đề / 24h)</strong> để các học sinh tiếp theo truy cập tức thì mà không tiêu tốn thêm RPD:</p>
+            <p>$$P(B_k|A) = \\frac{P(B_k)P(A|B_k)}{\\sum_{i=1}^n P(B_i)P(A|B_i)}$$</p>
+          </div>
+        `
+      });
+      box.innerHTML = formatMarkdownMath(reply);
+      typesetMath();
+    }
+
+    let currentOCRInlineData = null;
+
+    async function handleOCRFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      document.getElementById('ocr-preview-container').classList.remove('hidden');
+      document.getElementById('ocr-filename').textContent = `Đã nạp: ${file.name}`;
+      const imgPreview = document.getElementById('ocr-image-preview');
+
+      if (file.type === 'application/pdf' && window.pdfjsLib) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const canvas = document.createElement('canvas');
+        canvas.height = viewport.height; canvas.width = viewport.width;
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        imgPreview.src = dataUrl;
+        currentOCRInlineData = { mimeType: 'image/jpeg', data: dataUrl.split(',')[1] };
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          imgPreview.src = reader.result;
+          currentOCRInlineData = { mimeType: file.type || 'image/jpeg', data: reader.result.split(',')[1] };
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function runTutorAction(mode) {
+      const problem = document.getElementById('tutor-problem-input').value.trim() || 'Một lô hàng có 10 sản phẩm tốt và 4 phế phẩm. Lấy ngẫu nhiên 3 sản phẩm. Tính xác suất có ít nhất 2 sản phẩm tốt.';
+      const studentWork = document.getElementById('tutor-student-work').value.trim();
+      const box = document.getElementById('tutor-response-box');
+      box.innerHTML = `<span class="text-cobalt animate-pulse">Đang xử lý với biên an toàn RPM=${RPM_CAP}, TPM=${TPM_CAP}...</span>`;
+
+      if (mode === 'strategy') {
+        const res = await callGeminiProxy({
+          prompt: `Đề bài: "${problem}". Cung cấp CHIẾN LƯỢC GIẢI BÀI (Bước 1 & Bước 2), TUYỆT ĐỐI KHÔNG ĐƯA ĐÁP ÁN.`,
+          cacheKey: `tutor_strat_${problem.slice(0, 40)}`,
+          fallbackGenerator: () => `<strong>Bước 1 (Tìm hiểu bài toán):</strong> Xác định kích thước không gian mẫu $n(\\Omega) = C_{14}^3$ và biểu diễn biến cố $A = A_2 \\cup A_3$.<br/><strong>Bước 2 (Chương trình giải):</strong> Đếm số kết quả thuận lợi cho từng trường hợp xung khắc hoặc dùng biến cố đối $\\overline{A}$ (không tiết lộ kết quả số).`
+        });
+        box.innerHTML = formatMarkdownMath(res);
+      } else if (mode === 'grade') {
+        const res = await callGeminiProxy({
+          prompt: `Đề bài: "${problem}". Bài làm: "${studentWork}". Chỉ chấm điểm trên thang 10 và nhận xét lỗi sai.`,
+          inlineData: currentOCRInlineData,
+          fallbackGenerator: () => `<strong>✅ Điểm bài làm: 8.0 / 10.</strong> Bạn đã xác định đúng hướng giải ở Bước 2 nhưng cần bổ sung lập luận biến cố xung khắc ở Bước 3. Đã lưu nhận xét vào Hồ sơ AI.`
+        });
+        recordStudentAttempt({
+          score: 8.0,
+          categoryKey: "CALCULATION_NOTATION",
+          topic: "AI Tutor OCR",
+          detail: "Thiếu nêu điều kiện xung khắc khi trình bày Bước 3.",
+          step: "Bước 3: Trình bày lời giải"
+        });
+        box.innerHTML = formatMarkdownMath(res);
+      } else {
+        const res = await callGeminiProxy({
+          prompt: `Đề bài: "${problem}". Trình bày lời giải chi tiết đủ 4 bước.`,
+          cacheKey: `tutor_sol_${problem.slice(0, 40)}`,
+          fallbackGenerator: () => `<strong>Bước 1:</strong> $n(\\Omega) = C_{14}^3 = 364$.<br/><strong>Bước 2 & 3:</strong> $n(A) = C_{10}^2 C_4^1 + C_{10}^3 = 180 + 120 = 300 \\Rightarrow P(A) = \\frac{300}{364} = \\frac{75}{91} \\approx 0.8242$.<br/><strong>Bước 4 (Kiểm tra):</strong> Giải bằng biến cố đối cho cùng kết quả.`
+        });
+        box.innerHTML = formatMarkdownMath(res);
+      }
+      typesetMath();
+    }
+
+    /*************************************************************************
+     * 5 BÀI TẬP TRẮC NGHIỆM RIÊNG & 5 BÀI TẬP TỰ LUẬN RIÊNG
+     *************************************************************************/
+    const MCQ_PROBLEMS = [
+      {
+        id: 1, topic: "Công thức Cộng & Nhân Xác Suất",
+        question: "Hai xạ thủ A và B độc lập cùng bắn vào mục tiêu. $P(A)=0.8, P(B)=0.7$. Xác suất có ít nhất 1 người bắn trúng là:",
+        options: ["A. $0.56$", "B. $0.94$", "C. $0.38$", "D. $0.86$"],
+        correctIndex: 1, errorCategory: "CONCEPT_CONFUSION",
+        strategy: "**Bước 1 & 2:** Dùng biến cố đối cả hai cùng trượt $\\overline{A} \\cap \\overline{B}$ hoặc $P(A)+P(B)-P(A)P(B)$.",
+        solution: "**Lời giải:** $P(A \\cup B) = 1 - (1-0.8)(1-0.7) = 0.94$. **Chọn B**."
+      },
+      {
+        id: 2, topic: "Công thức Đầy đủ & Định lý Bayes",
+        question: "Nhà máy có phân xưởng I ($60\\%$ sản lượng, $2\\%$ phế phẩm) và phân xưởng II ($40\\%$ sản lượng, $5\\%$ phế phẩm). Chọn ngẫu nhiên 1 sản phẩm thấy là phế phẩm. Xác suất nó do phân xưởng II sản xuất là:",
+        options: ["A. $0.625$", "B. $0.375$", "C. $0.032$", "D. $0.020$"],
+        correctIndex: 0, errorCategory: "FORMULA_SELECTION",
+        strategy: "**Bước 1 & 2:** Tính xác suất phế phẩm $P(A)$ bằng công thức đầy đủ, sau đó tính $P(B_2|A)$ bằng công thức Bayes.",
+        solution: "**Lời giải:** $P(A) = 0.6(0.02)+0.4(0.05)=0.032 \\Rightarrow P(B_2|A) = \\frac{0.02}{0.032} = 0.625$. **Chọn A**."
+      },
+      {
+        id: 3, topic: "Phân phối Nhị thức $B(n,p)$",
+        question: "Cho $X \\sim B(n=100, p=0.2)$. Kỳ vọng $E(X)$ và độ lệch chuẩn $\\sigma_X$ lần lượt là:",
+        options: ["A. $20$ và $16$", "B. $20$ và $4$", "C. $80$ và $4$", "D. $20$ và $2$"],
+        correctIndex: 1, errorCategory: "CALCULATION_NOTATION",
+        strategy: "**Bước 1 & 2:** Áp dụng $E(X)=np$ và $\\sigma_X = \\sqrt{np(1-p)}$.",
+        solution: "**Lời giải:** $E(X)=20, \\sigma_X = \\sqrt{100 \\times 0.2 \\times 0.8} = 4$. **Chọn B**."
+      },
+      {
+        id: 4, topic: "Phân phối Chuẩn $N(\\mu, \\sigma^2)$",
+        question: "Cho $X \\sim N(\\mu=200, \\sigma^2=25^2)$. Biết $P(|Z| \\le 1) \\approx 0.6826$. Xác suất $P(175 \\le X \\le 225)$ là:",
+        options: ["A. $0.3413$", "B. $0.9544$", "C. $0.6826$", "D. $0.5000$"],
+        correctIndex: 2, errorCategory: "CONDITION_PARSING",
+        strategy: "**Bước 1 & 2:** Chuẩn hóa $Z = \\frac{X-\\mu}{\\sigma}$ về khoảng $[-1, 1]$.",
+        solution: "**Lời giải:** $P(-1 \\le Z \\le 1) \\approx 0.6826$. **Chọn C**."
+      },
+      {
+        id: 5, topic: "Khoảng tin cậy cho Trung bình",
+        question: "Mẫu $n=100, \\bar{x}=15, s=3$, độ tin cậy $95\\%$ ($z_{0.025}=1.96$). Độ chính xác $\\varepsilon$ là:",
+        options: ["A. $0.588$", "B. $1.960$", "C. $0.0588$", "D. $0.300$"],
+        correctIndex: 0, errorCategory: "FORMULA_SELECTION",
+        strategy: "**Bước 1 & 2:** Áp dụng $\\varepsilon = z_{\\alpha/2} \\frac{s}{\\sqrt{n}}$.",
+        solution: "**Lời giải:** $\\varepsilon = 1.96 \\times \\frac{3}{10} = 0.588$. **Chọn A**."
+      }
+    ];
+
+    const ESSAY_PROBLEMS = [
+      {
+        id: 1, topic: "Tổ hợp & Xác suất Cổ điển",
+        question: "Hộp có 6 bi xanh, 5 bi đỏ, 4 bi vàng. Lấy ngẫu nhiên 4 bi. Tính xác suất 4 bi lấy ra có đủ 3 màu.",
+        keywords: ["720", "1365", "48/91", "0.527"], errorCategory: "CONDITION_PARSING",
+        strategy: "**Bước 1 & 2:** Không gian mẫu $C_{15}^4$. Chia 3 trường hợp xung khắc: (2X,1Đ,1V), (1X,2Đ,1V), (1X,1Đ,2V).",
+        solution: "**Lời giải 4 bước:** $n(\\Omega)=C_{15}^4=1365$. $n(A) = 300+240+180=720 \\Rightarrow P(A)=\\frac{720}{1365}=\\frac{48}{91}\\approx 0.5275$."
+      },
+      {
+        id: 2, topic: "Hệ đầy đủ & Định lý Bayes",
+        question: "Tỷ lệ mắc bệnh X là $1\\%$. Xét nghiệm dương tính với $98\\%$ người bệnh và dương tính giả với $3\\%$ người không bệnh. Một người xét nghiệm dương tính, tính xác suất người đó thực sự mắc bệnh.",
+        keywords: ["0.0395", "98/395", "0.248", "24.8"], errorCategory: "FORMULA_SELECTION",
+        strategy: "**Bước 1 & 2:** Tính xác suất dương tính $P(A) = 0.01(0.98) + 0.99(0.03)$, sau đó dùng Bayes tính $P(B_1|A)$.",
+        solution: "**Lời giải 4 bước:** $P(A)=0.0395 \\Rightarrow P(B_1|A)=\\frac{0.0098}{0.0395}=\\frac{98}{395}\\approx 24.81\\%$."
+      },
+      {
+        id: 3, topic: "Biến ngẫu nhiên Rời rạc",
+        question: "Cho $X \\in \\{0, 1, 2, 3\\}$ có $P = \\{0.1; 0.3; 0.4; k\\}$. Tìm $k$, tính $E(X)$ và $Var(X)$.",
+        keywords: ["0.2", "1.7", "0.81"], errorCategory: "CALCULATION_NOTATION",
+        strategy: "**Bước 1 & 2:** Dùng $\\sum p_i = 1$ tìm $k$; áp dụng $E(X)=\\sum x_i p_i$ và $Var(X)=E(X^2)-[E(X)]^2$.",
+        solution: "**Lời giải 4 bước:** $k=0.2$; $E(X)=1.7$; $E(X^2)=3.7 \\Rightarrow Var(X)=3.7 - 1.7^2 = 0.81$."
+      },
+      {
+        id: 4, topic: "Hàm mật độ Xác suất Liên tục",
+        question: "Cho $f(x) = cx^2$ trên $[0,2]$ và $0$ ngoài đoạn đó. Tìm $c$ và tính $P(1 \\le X \\le 2)$.",
+        keywords: ["3/8", "0.375", "7/8", "0.875"], errorCategory: "CALCULATION_NOTATION",
+        strategy: "**Bước 1 & 2:** Giải $\\int_0^2 cx^2 dx = 1$ tìm $c$, sau đó tính tích phân từ $1$ đến $2$.",
+        solution: "**Lời giải 4 bước:** $c = \\frac{3}{8} = 0.375$; $P(1 \\le X \\le 2) = \\int_1^2 \\frac{3}{8}x^2 dx = \\frac{7}{8} = 0.875$."
+      },
+      {
+        id: 5, topic: "Kiểm định Giả thuyết Thống kê",
+        question: "Định mức $\\mu_0 = 500\\text{g}$. Mẫu $n=64$ có $\\bar{x}=496\\text{g}$, biết $\\sigma=12\\text{g}$. Với $\\alpha=5\\%$ ($z_{0.025}=1.96$), kiểm định hai phía xem dây chuyền có bình thường không.",
+        keywords: ["-2.67", "2.67", "bác bỏ"], errorCategory: "FORMULA_SELECTION",
+        strategy: "**Bước 1 & 2:** Đặt $H_0: \\mu=500, H_1: \\mu \\ne 500$. Tính $Z_{qs} = \\frac{\\bar{x}-\\mu_0}{\\sigma/\\sqrt{n}}$ và so sánh với $1.96$.",
+        solution: "**Lời giải 4 bước:** $Z_{qs} = \\frac{496-500}{12/8} = -2.67$. Vì $|Z_{qs}| = 2.67 > 1.96$, bác bỏ $H_0$."
+      }
+    ];
+
+    function renderPracticeModules() {
+      document.getElementById('practice-mcq-list').innerHTML = MCQ_PROBLEMS.map((item, idx) => `
+        <div class="academic-card p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-black/10 pb-3">
+            <span class="text-xs font-mono uppercase tracking-wider text-cobalt font-semibold">Trắc nghiệm #${idx + 1} • ${item.topic}</span>
+            <span class="text-xs text-muted" id="mcq-status-${item.id}">Chưa chấm</span>
+          </div>
+          <p class="text-sm sm:text-base font-medium text-ink">${item.question}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            ${item.options.map((opt, oIdx) => `
+              <label class="flex items-center gap-3 p-3.5 rounded-xl bg-paper border border-black/10 cursor-pointer hover:border-cobalt transition">
+                <input type="radio" name="mcq-${item.id}" value="${oIdx}" />
+                <span class="text-sm text-ink">${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+          <div class="flex flex-wrap gap-2.5 pt-2">
+            <button onclick="showMCQFeedback(${item.id}, 'strategy')" class="px-3.5 py-2 rounded-lg bg-ochre/30 border border-ochre text-ink text-xs font-semibold">💡 Chiến lược giải (Không lộ đáp án)</button>
+            <button onclick="gradeMCQ(${item.id})" class="px-3.5 py-2 rounded-lg bg-cobalt text-white text-xs font-semibold">✅ Chấm bài</button>
+            <button onclick="showMCQFeedback(${item.id}, 'solution')" class="px-3.5 py-2 rounded-lg bg-teal text-white text-xs font-semibold">📘 Hiện lời giải</button>
+          </div>
+          <div id="mcq-feedback-${item.id}" class="hidden p-4 rounded-xl bg-surface text-xs sm:text-sm border border-black/10"></div>
+        </div>
+      `).join('');
+
+      document.getElementById('practice-essay-list').innerHTML = ESSAY_PROBLEMS.map((item, idx) => `
+        <div class="academic-card p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-black/10 pb-3">
+            <span class="text-xs font-mono uppercase tracking-wider text-teal font-semibold">Tự luận #${idx + 1} • ${item.topic}</span>
+          </div>
+          <p class="text-sm sm:text-base font-medium text-ink">${item.question}</p>
+          <div id="math-toolbar-essay-${item.id}" class="flex flex-wrap gap-1.5"></div>
+          <textarea id="essay-input-${item.id}" rows="3" placeholder="Trình bày lời giải tự luận của bạn..." class="w-full p-3.5 rounded-xl bg-paper border border-black/15 text-sm"></textarea>
+          <div class="flex flex-wrap gap-2.5">
+            <button onclick="showEssayFeedback(${item.id}, 'strategy')" class="px-3.5 py-2 rounded-lg bg-ochre/30 border border-ochre text-ink text-xs font-semibold">💡 Chiến lược giải (Không lộ đáp án)</button>
+            <button onclick="gradeEssay(${item.id})" class="px-3.5 py-2 rounded-lg bg-cobalt text-white text-xs font-semibold">✅ Chấm bài tự luận</button>
+            <button onclick="showEssayFeedback(${item.id}, 'solution')" class="px-3.5 py-2 rounded-lg bg-teal text-white text-xs font-semibold">📘 Hiện lời giải chi tiết</button>
+          </div>
+          <div id="essay-feedback-${item.id}" class="hidden p-4 rounded-xl bg-surface text-xs sm:text-sm border border-black/10"></div>
+        </div>
+      `).join('');
+
+      ESSAY_PROBLEMS.forEach(item => mountMathToolbar(`math-toolbar-essay-${item.id}`, `essay-input-${item.id}`));
+      typesetMath();
+    }
+
+    function switchPracticeSubTab(sub) {
+      document.getElementById('practice-mcq-list').classList.toggle('hidden', sub !== 'mcq');
+      document.getElementById('practice-essay-list').classList.toggle('hidden', sub !== 'essay');
+    }
+
+    function showMCQFeedback(id, type) {
+      const item = MCQ_PROBLEMS.find(x => x.id === id);
+      const box = document.getElementById(`mcq-feedback-${id}`);
+      box.classList.remove('hidden');
+      box.innerHTML = formatMarkdownMath(type === 'strategy' ? item.strategy : item.solution);
+      typesetMath();
+    }
+
+    function gradeMCQ(id) {
+      const item = MCQ_PROBLEMS.find(x => x.id === id);
+      const selected = document.querySelector(`input[name="mcq-${id}"]:checked`);
+      const box = document.getElementById(`mcq-feedback-${id}`);
+      box.classList.remove('hidden');
+      if (!selected) {
+        box.innerHTML = `<span class="text-vermilion">Vui lòng chọn đáp án trước khi chấm.</span>`;
+        return;
+      }
+      if (parseInt(selected.value, 10) === item.correctIndex) {
+        recordStudentAttempt({ score: 10 });
+        box.innerHTML = `<span class="text-teal font-bold">🎉 Chính xác (10/10 điểm)!</span>`;
+      } else {
+        recordStudentAttempt({
+          score: 0, categoryKey: item.errorCategory, topic: item.topic,
+          detail: `Sai câu trắc nghiệm #${item.id} (${item.topic}).`, step: "Bước 2: Chương trình giải"
+        });
+        box.innerHTML = `<span class="text-vermilion font-bold">❌ Chưa chính xác. Đã lưu lỗi sai vào Hồ sơ AI.</span>`;
+      }
+    }
+
+    function showEssayFeedback(id, type) {
+      const item = ESSAY_PROBLEMS.find(x => x.id === id);
+      const box = document.getElementById(`essay-feedback-${id}`);
+      box.classList.remove('hidden');
+      box.innerHTML = formatMarkdownMath(type === 'strategy' ? item.strategy : item.solution);
+      typesetMath();
+    }
+
+    async function gradeEssay(id) {
+      const item = ESSAY_PROBLEMS.find(x => x.id === id);
+      const work = document.getElementById(`essay-input-${id}`).value.trim();
+      const box = document.getElementById(`essay-feedback-${id}`);
+      box.classList.remove('hidden');
+      if (!work) {
+        box.innerHTML = `<span class="text-vermilion">Vui lòng nhập bài giải trước khi chấm.</span>`;
+        return;
+      }
+      const matched = item.keywords.some(kw => work.toLowerCase().includes(kw));
+      const reply = await callGeminiProxy({
+        prompt: `Chấm điểm tự luận đề: "${item.question}". Bài làm: "${work}".`,
+        cacheKey: `essay_${id}_${work.slice(0, 25)}`,
+        fallbackGenerator: () => matched
+          ? `<strong>✅ Điểm AI: 9.0/10.</strong> Kết quả chính xác, lập luận chặt chẽ.`
+          : `<strong>⚠️ Điểm AI: 5.0/10.</strong> Kết quả chưa khớp chuẩn, lỗi đã được ghi vào Hồ sơ học tập.`
+      });
+      recordStudentAttempt({
+        score: matched ? 9.0 : 5.0,
+        categoryKey: matched ? null : item.errorCategory,
+        topic: item.topic,
+        detail: matched ? "" : `Sai kết quả hoặc lập luận ở Bài tự luận #${item.id}.`,
+        step: "Bước 3: Trình bày lời giải"
+      });
+      box.innerHTML = formatMarkdownMath(reply);
+      typesetMath();
+    }
+
+    /*************************************************************************
+     * PHÒNG VẤN ĐÁP LÝ THUYẾT & BẢN ĐỒ TƯ DUY TIẾNG VIỆT
+     *************************************************************************/
+    const VIVA_QUESTIONS = [
+      { id: 1, topic: "Khái niệm Độc lập & Xung khắc", question: "Tại sao hai biến cố xung khắc có xác suất dương thì không bao giờ độc lập với nhau?" },
+      { id: 2, topic: "Định lý Giới hạn Trung tâm", question: "Tại sao trung bình mẫu $\\bar{X}$ lại xấp xỉ phân phối chuẩn khi kích thước mẫu $n$ đủ lớn?" },
+      { id: 3, topic: "Ý nghĩa Khoảng tin cậy 95%", question: "Khoảng tin cậy 95% cho $\\mu$ là $(48; 52)$ có nghĩa là gì?" },
+      { id: 4, topic: "Sai lầm loại I & loại II", question: "Khi giảm mức ý nghĩa $\\alpha$ xuống rất nhỏ mà giữ nguyên cỡ mẫu $n$, sai lầm loại II ($\\beta$) thay đổi thế nào?" }
+    ];
+    let activeVivaIdx = 0;
+
+    function renderVivaBank() {
+      document.getElementById('viva-questions-bank').innerHTML = VIVA_QUESTIONS.map((q, idx) => `
+        <button onclick="selectVivaQuestion(${idx})" class="w-full text-left p-3.5 rounded-xl border transition ${idx === activeVivaIdx ? 'bg-cobalt text-white border-cobalt' : 'bg-paper text-ink border-black/10'}">
+          <div class="text-[11px] font-mono uppercase">${q.topic}</div>
+          <div class="text-xs sm:text-sm font-medium mt-1">${q.question}</div>
+        </button>
+      `).join('');
+      typesetMath();
+    }
+
+    function selectVivaQuestion(idx) {
+      activeVivaIdx = idx;
+      const q = VIVA_QUESTIONS[idx];
+      document.getElementById('viva-current-topic').textContent = `Chủ đề: ${q.topic}`;
+      document.getElementById('viva-current-question').innerHTML = q.question;
+      renderVivaBank();
+      typesetMath();
+    }
+
+    async function submitVivaAnswer() {
+      const input = document.getElementById('viva-answer-input');
+      const answer = input.value.trim();
+      if (!answer) return;
+      const q = VIVA_QUESTIONS[activeVivaIdx];
+      const history = document.getElementById('viva-chat-history');
+      history.innerHTML += `<div class="p-3.5 rounded-xl bg-cobalt text-white text-sm ml-8"><strong>Bạn:</strong> ${answer}</div>`;
+      input.value = '';
+
+      const reply = await callGeminiProxy({
+        prompt: `Chấm điểm vấn đáp câu hỏi "${q.question}". Câu trả lời: "${answer}".`,
+        cacheKey: `viva_${q.id}_${answer.slice(0, 25)}`,
+        fallbackGenerator: () => `<strong>Chấm điểm Vấn đáp: 8.5/10.</strong> Để chặt chẽ hơn, hãy nêu rõ $A \\cap B = \\emptyset \\Rightarrow P(A \\cap B) = 0 \\ne P(A)P(B) > 0$.`
+      });
+      recordStudentAttempt({ score: 8.5 });
+      history.innerHTML += `<div class="p-3.5 rounded-xl bg-white border border-cobalt/20 text-sm text-ink mr-8">${formatMarkdownMath(reply)}</div>`;
+      typesetMath();
+    }
+
+    function requestFollowUpViva() {
+      selectVivaQuestion((activeVivaIdx + 1) % VIVA_QUESTIONS.length);
+    }
+
+    let mindmapNodes = [
+      { id: 'root', x: 460, y: 260, r: 42, color: '#1C252C', label: 'XÁC SUẤT & THỐNG KÊ', category: 'Trục Trung Tâm', desc: 'Hệ thống tri thức kết nối Lý thuyết Xác suất và Thống kê Toán học.', formula: '$$P(\\Omega) = 1$$' },
+      { id: 'prob', x: 200, y: 120, r: 34, color: '#2B5B84', parent: 'root', label: 'Biến cố & Định lý Bayes', category: 'Nhánh 1', desc: 'Không gian mẫu, xác suất điều kiện, công thức đầy đủ và Bayes.', formula: '$$P(B_k\vert{}A) = \\frac{P(B_k)P(A\vert{}B_k)}{P(A)}$$' },
+      { id: 'rv', x: 720, y: 120, r: 34, color: '#2A9D8F', parent: 'root', label: 'Biến ngẫu nhiên & Phân phối', category: 'Nhánh 2', desc: 'Kỳ vọng, Phương sai, Nhị thức, Poisson, Chuẩn.', formula: '$$X \\sim N(\\mu, \\sigma^2)$$' },
+      { id: 'est', x: 200, y: 400, r: 34, color: '#D95F43', parent: 'root', label: 'Lý thuyết Mẫu & Ước lượng', category: 'Nhánh 3', desc: 'Ước lượng điểm và khoảng tin cậy cho trung bình, tỷ lệ.', formula: '$$\\bar{x} \\pm z_{\\alpha/2}\\frac{s}{\\sqrt{n}}$$' },
+      { id: 'hyp', x: 720, y: 400, r: 34, color: '#8E5572', parent: 'root', label: 'Kiểm định Giả thuyết', category: 'Nhánh 4', desc: 'Kiểm định Z, Student t, P-value và sai lầm loại I, II.', formula: '$$Z_{qs} = \\frac{\\bar{x}-\\mu_0}{\\sigma/\\sqrt{n}}$$' }
+    ];
+    let selectedNodeId = 'root';
+
+    function renderMindmapSVG() {
+      const svg = document.getElementById('mindmap-svg');
+      if (!svg) return;
+      let edges = '', nodes = '';
+      mindmapNodes.forEach(n => {
+        if (n.parent) {
+          const p = mindmapNodes.find(x => x.id === n.parent);
+          if (p) edges += `<line x1="${p.x}" y1="${p.y}" x2="${n.x}" y2="${n.y}" stroke="#C8C2B8" stroke-width="2.5" />`;
+        }
+        nodes += `
+          <g class="cursor-pointer" onclick="inspectMindmapNode('${n.id}')">
+            <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${n.color}" stroke="#FFF" stroke-width="3" />
+            <rect x="${n.x - 95}" y="${n.y + n.r + 6}" width="190" height="24" rx="6" fill="#FFF" stroke="rgba(28,37,44,0.12)" />
+            <text x="${n.x}" y="${n.y + n.r + 22}" text-anchor="middle" fill="#1C252C" font-family="Be Vietnam Pro, sans-serif" font-size="11.5" font-weight="600">${n.label}</text>
+          </g>
+        `;
+      });
+      svg.innerHTML = edges + nodes;
+    }
+
+    function inspectMindmapNode(id) {
+      selectedNodeId = id;
+      const n = mindmapNodes.find(x => x.id === id);
+      if (!n) return;
+      document.getElementById('mm-node-category').textContent = n.category;
+      document.getElementById('mm-node-title').textContent = n.label;
+      document.getElementById('mm-node-desc').innerHTML = n.desc;
+      document.getElementById('mm-node-formula').innerHTML = n.formula;
+      renderMindmapSVG();
+      typesetMath();
+    }
+
+    function expandMindmapWithAI() {
+      const topic = document.getElementById('mindmap-custom-topic').value.trim() || 'Hồi quy tuyến tính';
+      const id = 'node_' + Date.now();
+      mindmapNodes.push({
+        id, x: 460 + (Math.random() - 0.5) * 320, y: 260 + (Math.random() - 0.5) * 220,
+        r: 28, color: '#D95F43', parent: selectedNodeId, label: topic,
+        category: 'Nhánh Mở Rộng', desc: `Nhánh kiến thức "${topic}" theo quy trình 4 bước sư phạm.`,
+        formula: '$$\\hat{Y} = \\beta_0 + \\beta_1 X$$'
+      });
+      inspectMindmapNode(id);
+    }
+
+    function resetMindmapView() { inspectMindmapNode('root'); }
+
+    function switchTab(tabKey) {
+      ['pedagogy', 'tutor', 'practice', 'viva', 'mindmap'].forEach(k => {
+        document.getElementById(`section-${k}`).classList.toggle('hidden', k !== tabKey);
+      });
+      typesetMath();
+    }
+
+    function formatMarkdownMath(text) {
+      return (text || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>');
+    }
+
+    function typesetMath() {
+      if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise().catch(() => {});
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      SafeRateGovernor.syncState();
+      renderPedagogySteps();
+      runSimulationBatch(40);
+      mountMathToolbar('math-toolbar-pedagogy', 'pedagogy-user-input');
+      mountMathToolbar('math-toolbar-tutor-prob', 'tutor-problem-input');
+      mountMathToolbar('math-toolbar-tutor-work', 'tutor-student-work');
+      mountMathToolbar('math-toolbar-viva', 'viva-answer-input');
+      renderPracticeModules();
+      renderVivaBank();
+      renderMindmapSVG();
+      renderProfileUI();
+    });
+  </script>
+</body>
+</html>

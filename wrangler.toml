@@ -1,8 +1,0 @@
-name = "xstk-ai-seeing-theory"
-compatibility_date = "2026-10-19"
-
-[site]
-bucket = "."
-
-[vars]
-# Các cấu hình môi trường nếu cần
